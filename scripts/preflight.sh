@@ -41,7 +41,7 @@ for group in render video; do
 done
 
 printf '\n%s\n' '== Repository inputs =='
-for path in .env games/sample-game; do
+for path in .env galgames/sample-galgame; do
     if [ -e "$path" ]; then
         printf '%s: present\n' "$path"
     else

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sample Galgame
+Comment=Launch the sample Windows galgame with Wine
+Path=/galgames/sample-galgame
+Exec=sh -c "cd '/galgames/sample-galgame' && exec env WINEARCH=win64 WINEPREFIX=/wine-prefix/sample-galgame /usr/bin/wine Galgame.exe"
+Icon=applications-games
+Terminal=false
+Categories=Game;
+StartupNotify=false
