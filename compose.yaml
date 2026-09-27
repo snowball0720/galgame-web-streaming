@@ -1,0 +1,35 @@
+services:
+  neko:
+    build: .
+    image: neko-wine-demo:local
+    container_name: neko-wine-demo
+    restart: unless-stopped
+    shm_size: 2gb
+    devices:
+      - /dev/dri:/dev/dri
+    group_add:
+      - "${RENDER_GID:-993}"
+      - "${VIDEO_GID:-44}"
+    ports:
+      - "127.0.0.1:18088:8080/tcp"
+      - "443:443/udp"
+    environment:
+      NEKO_WEBRTC_UDPMUX: "443"
+      NEKO_WEBRTC_NAT1TO1: ${PUBLIC_IP:?Set PUBLIC_IP in .env}
+      NEKO_DESKTOP_SCREEN: 1920x1080@60
+      NEKO_MAX_FPS: "60"
+      NEKO_CAPTURE_VIDEO_CODEC: h264
+      NEKO_H264: "true"
+      NEKO_HWENC: vaapi
+      NEKO_VIDEO_BITRATE: "8000"
+      LIBVA_DRIVER_NAME: iHD
+      NEKO_MEMBER_MULTIUSER_USER_PASSWORD: ${NEKO_USER_PASSWORD:?Set NEKO_USER_PASSWORD in .env}
+      NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD: ${NEKO_ADMIN_PASSWORD:?Set NEKO_ADMIN_PASSWORD in .env}
+      LANG: ja_JP.UTF-8
+      LC_ALL: ja_JP.UTF-8
+      WINEPREFIX: /wine-prefix/sample-game
+      WINEARCH: win64
+    volumes:
+      - ./games:/games
+      - ./wine-prefix:/wine-prefix
+      - ./desktop:/home/neko/Desktop:ro

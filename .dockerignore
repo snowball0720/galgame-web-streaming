@@ -1,0 +1,5 @@
+.env
+.git
+games/
+wine-prefix/
+data/
