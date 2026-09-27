@@ -1,0 +1,32 @@
+services:
+  neko-arm64:
+    platform: linux/arm64
+    image: neko-galgame:arm64-local
+    build:
+      context: .
+      dockerfile: Dockerfile.arm64
+    container_name: neko-galgame-arm64
+    restart: unless-stopped
+    shm_size: 2gb
+    ports:
+      - "127.0.0.1:18088:8080/tcp"
+      - "443:443/udp"
+    environment:
+      NEKO_WEBRTC_UDPMUX: "443"
+      NEKO_WEBRTC_NAT1TO1: ${PUBLIC_IP:?Set PUBLIC_IP in .env}
+      NEKO_DESKTOP_SCREEN: 1280x720@30
+      NEKO_MAX_FPS: "30"
+      NEKO_CAPTURE_VIDEO_CODEC: h264
+      NEKO_H264: "true"
+      NEKO_VIDEO_BITRATE: "4000"
+      NEKO_MEMBER_MULTIUSER_USER_PASSWORD: ${NEKO_USER_PASSWORD:?Set NEKO_USER_PASSWORD in .env}
+      NEKO_MEMBER_MULTIUSER_ADMIN_PASSWORD: ${NEKO_ADMIN_PASSWORD:?Set NEKO_ADMIN_PASSWORD in .env}
+      LANG: ja_JP.UTF-8
+      LC_ALL: ja_JP.UTF-8
+      WINEPREFIX: /wine-prefix/sample-galgame
+      WINEARCH: win64
+      WINESERVER: /usr/lib/wine/wineserver
+    volumes:
+      - ./galgames:/galgames
+      - ./wine-prefix-arm64:/wine-prefix
+      - ./desktop-arm64:/home/neko/Desktop:ro

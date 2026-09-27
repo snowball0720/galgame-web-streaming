@@ -155,7 +155,7 @@ Save location is galgame-specific. Check whether saves are written beside the ga
 
 ### CPU architecture pitfalls
 
-`amd64` means the x86-64 instruction-set architecture; it does not mean the CPU vendor is AMD. Wine translates Windows APIs but does not translate CPU instructions. A 64-bit Windows galgame needs x86-64 Wine; a 32-bit Windows galgame needs a working 32-bit Wine path. An ARM64 VPS cannot run those binaries with ARM64 Wine alone. The options are an x86-64 VPS, or an ARM64-specific build that uses Box64/Box32 with x86 Wine; the latter adds CPU cost and compatibility risk. Full-system QEMU emulation can be expensive and nested virtualization may not be available.
+`amd64` means the x86-64 instruction-set architecture; it does not mean the CPU vendor is AMD. Wine translates Windows APIs but does not translate CPU instructions. A 64-bit Windows galgame needs x86-64 Wine; a 32-bit Windows galgame needs a working 32-bit Wine path. An ARM64 VPS cannot run those binaries with ARM64 Wine alone. The default recommendation is to use an x86-64 VPS. If ARM64 is the only option, follow [`ARM64-EXPERIMENTAL.md`](ARM64-EXPERIMENTAL.md) and use its separate Dockerfile/Compose; Box64/Box32 translation adds CPU cost and compatibility risk. Full-system QEMU emulation can be expensive and nested virtualization may not be available.
 
 One tested Box32 path black-screened with `BOX64_PROFILE=fastest`, while a separate 64-bit path showed no meaningful improvement from the same profile. Treat low CPU during a failed launch as a possible hang, not a performance win. The included `Dockerfile` is x86-64 only; do not try to fix an ARM mismatch by merely changing an image tag.
 

@@ -17,10 +17,10 @@ This repository is only for deploying a browser-accessible Windows galgame/visua
 
 When required values are available, finish the deployment rather than stopping at a plan:
 
-1. Verify supported architecture and host capabilities. The checked-in image is for Linux x86-64 with an Intel GPU. Adapt it for a different host only when the correct driver and Neko encoder are clear; otherwise explain the exact missing choice.
+1. Verify architecture and host capabilities. Prefer Linux x86-64 with the primary `Dockerfile`/`compose.yaml`. For ARM64, read `ARM64-EXPERIMENTAL.md` and use its separate files only after clearly explaining the slower, less compatible Box64/Box32 path; do not silently select it when an x86-64 option is available.
 2. Install or verify Docker Engine and Compose for the host distribution.
-3. Prepare `.env`, private galgame/prefix directories, Intel device access, and firewall rules. Keep Neko's HTTP port bound to loopback; expose WebRTC UDP 443 and serve the web UI behind HTTPS.
-4. Build and start the Neko container. Check Compose status, container health endpoint, logs, display renderer, and VA-API access.
+3. Prepare `.env`, private galgame/prefix directories, the selected renderer/encoder access (Intel GPU or documented software fallback), and firewall rules. Keep Neko's HTTP port bound to loopback; expose WebRTC UDP 443 and serve the web UI behind HTTPS.
+4. Build and start the Neko container. Check Compose status, container health endpoint, logs, and the selected rendering/encoding path. Validate VA-API only when using the Intel configuration.
 5. Configure Nginx and a valid TLS certificate for the user's domain. Check the Nginx configuration before reloading it.
 6. Create a galgame-specific desktop launcher using the actual executable path and correct Wine architecture. Initialize a persistent Wine prefix, start the galgame, and verify browser video, input, audio, and save persistence where the galgame permits.
 7. Recheck restart behavior and report the URL, service state, verified GPU paths, unresolved galgame-specific compatibility issues, and backup/config locations. Never include secrets in the report.

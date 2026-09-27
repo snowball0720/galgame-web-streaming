@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Sample Galgame (ARM64)
+Comment=Launch the sample 64-bit galgame through Box64/Wine
+Path=/galgames/sample-galgame
+Exec=sh -c "cd '/galgames/sample-galgame' && exec env vblank_mode=1 LP_NUM_THREADS=4 WINEARCH=win64 WINEPREFIX=/wine-prefix/sample-galgame /usr/local/bin/wine Galgame.exe"
+Icon=applications-games
+Terminal=false
+Categories=Game;
+StartupNotify=false

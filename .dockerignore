@@ -2,4 +2,5 @@
 .git
 galgames/
 wine-prefix/
+wine-prefix-arm64/
 data/

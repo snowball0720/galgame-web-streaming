@@ -1,0 +1,52 @@
+FROM --platform=linux/arm64 ghcr.io/m1k1o/neko/xfce:latest AS box64-build
+
+USER root
+
+# Build Box64 with its optional i386 (Box32) support for 32-bit Windows binaries.
+RUN apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        build-essential \
+        cmake \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/ptitSeb/box64.git /tmp/box64 \
+    && git -C /tmp/box64 checkout ac9b13a54f59ddfa94a93d595720d0e9dc9a9b75 \
+    && cmake -S /tmp/box64 -B /tmp/box64/build \
+        -D ARM_DYNAREC=ON \
+        -D BOX32=ON \
+        -D BOX32_BINFMT=OFF \
+        -D CMAKE_BUILD_TYPE=Release \
+    && cmake --build /tmp/box64/build --parallel 4
+
+FROM --platform=linux/arm64 ghcr.io/m1k1o/neko/xfce:latest
+
+USER root
+
+# Keep Neko/XFCE native ARM64 and install x86 Wine packages for Box64/Box32.
+RUN dpkg --add-architecture amd64 \
+    && dpkg --add-architecture i386 \
+    && apt-get update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        wine64:amd64 \
+        wine32:i386 \
+        locales \
+        fonts-noto-cjk \
+        fonts-ipafont \
+        winbind \
+        cabextract \
+        unzip \
+    && printf 'ja_JP.UTF-8 UTF-8\n' > /etc/locale.gen \
+    && locale-gen ja_JP.UTF-8 \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+COPY --from=box64-build /tmp/box64/build/box64 /usr/bin/box64
+COPY docker-arm64/wine /usr/local/bin/wine
+COPY docker-arm64/wineserver /usr/lib/wine/wineserver
+RUN chmod 0755 /usr/local/bin/wine /usr/lib/wine/wineserver /usr/bin/box64
+
+ENV LANG=ja_JP.UTF-8 \
+    LC_ALL=ja_JP.UTF-8 \
+    WINEARCH=win64 \
+    WINESERVER=/usr/lib/wine/wineserver
